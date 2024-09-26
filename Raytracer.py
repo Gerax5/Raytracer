@@ -28,7 +28,7 @@ rt.envMap = Texture("texture/room.bmp")
 # glass = Material(ior=1.5, spec=128, Ks=0.2, matType=TRANSPARENT)
 
 # earth = Material(texture=Texture("texture/gold.bmp"))
-marble = Material(texture=Texture("texture/gold.bmp"), spec=128, Ks=0.6, matType=REFLECTIVE)
+gold = Material(texture=Texture("texture/gold.bmp"), spec=128, Ks=0.6, matType=REFLECTIVE)
 blackMarble = Material(texture=Texture("texture/black.bmp"), spec=200, Ks=0.8, matType=REFLECTIVE)
 dotsGlass = Material(texture=Texture("texture/dots.bmp"), ior=1.5, spec=128, Ks=0.2, matType=TRANSPARENT)
 glassPurple = Material(diffuse=[0.54, 0.17, 0.89], ior=1.77, spec=128, Ks=0.2, matType=TRANSPARENT)
@@ -42,7 +42,7 @@ rt.lights.append(AmbientLight(intensity=0.1))
 
 # Arriba
 rt.scene.append(Sphere(position=[-5,2,-10], radius=1.5, material=voltorb))
-rt.scene.append(Sphere(position=[0,2,-10], radius=1.5, material=marble))
+rt.scene.append(Sphere(position=[0,2,-10], radius=1.5, material=gold))
 rt.scene.append(Sphere(position=[5,2,-10], radius=1.5, material=dotsGlass))
 
 #Abajo
