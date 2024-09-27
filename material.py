@@ -80,8 +80,8 @@ class Material(object):
                 if refractIntercept != None:
                     refractColor = refractIntercept.obj.material.GetSurfaceColor(refractIntercept, renderer, recursion + 1)
                 else:
-                    # refractColor = renderer.glEnvMapColor(intercept.point, refract)
-                    refractColor = renderer.glEnvMapColor(intercept.point, reflect)
+                    refractColor = renderer.glEnvMapColor(intercept.point, refract)
+                    #refractColor = renderer.glEnvMapColor(intercept.point, reflect)
 
                 # USnado las ecuacionde de fresnel, determinamos cuanta refleccion
                 # y cuanta refracion agregar al color final
