@@ -1,14 +1,12 @@
-# RT2
+# RT3
 - Gerardo Pineda 22880
 ## Materiales usados
-- Fondo: Un fondo que encontre por ahi
-- Gold: Material Reflectivo
-- Black Marble: Material Reflectivo
-- Dots Glass: Material Transparente con textura agregada de puntos
-- Glass Purple: Material transparente morado
-- Grass: Material opaco césped
-- Voltorb: Material opaco de un pokemon (no encontre un bmp entonces agarre un png y no salio bien pero me gusto jajaja)
+- Suelo: Uso un material color a madera
+- Paredes: Uso un blanco gris
+- Techo: Uso un blanco gris un poco mas claro
+- Espejos: Uso un material reflectivo morado
+- Caja1: Uso una textura de concreto
+- Caja2: Uso una textura de unas calaberas con un moño
 ## Imagenes
-#### Esferas
-* <img src="https://raw.githubusercontent.com/Gerax5/Raytracer/refs/heads/RT2/BMP/spheres5.bmp"/>
-* <img src="https://raw.githubusercontent.com/Gerax5/Raytracer/refs/heads/RT2/BMP/spheres4.bmp"/>
+#### Escena
+* <img src="https://github.com/Gerax5/Raytracer/blob/RT3/BMP/spheres6.bmp"/>
