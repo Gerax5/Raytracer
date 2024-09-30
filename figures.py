@@ -106,8 +106,7 @@ class Disk(Plane):
         if planeIntercept is None:
             return None
         
-        contact = subtractVectors(planeIntercept.point, self.position)
-        contact = normalizeVector(contact)
+        contact = magnitudeVector(subtractVectors(planeIntercept.point, self.position))
 
         if contact > self.radius:
             return None

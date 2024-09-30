@@ -31,9 +31,19 @@ class Material(object):
 
         for light in renderer.lights:
             shadowIntercept = None
+            lightDir = None
+
             if light.lightType == "Directional":
                 lightDir = [(-i) for i in light.direction]
+                shadowIntercept = renderer.glCastRay(intercept.point, lightDir, intercept.obj)                
+            elif light.lightType == "Point":
+                lightDir = subtractVectors(light.position, intercept.point)
+                R = magnitudeVector(lightDir)
+                lightDir = normalizeVector(lightDir)
                 shadowIntercept = renderer.glCastRay(intercept.point, lightDir, intercept.obj)
+                if shadowIntercept:
+                    if shadowIntercept.distance >= R:
+                        shadowIntercept = None
 
             if shadowIntercept == None:
                 
