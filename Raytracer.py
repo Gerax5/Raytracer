@@ -10,11 +10,11 @@ from lights import *
 from texture import Texture
 
 
-width = 700
-height = 540
+# width = 700
+# height = 540
 
-# width = 220
-# height = 220
+width = 220
+height = 220
 
 screen = pygame.display.set_mode((width, height), pygame.SCALED  )
 clock = pygame.time.Clock()
@@ -67,14 +67,19 @@ rt.lights.append(DirectionalLight(direction=[-1,-1,-1], intensity=0.8))
 
 # rt.lights.append(PointLight( position=[0,0,-5], intensity=1))
 
-rt.scene.append(AABB(position=[-1,0,-8], sizes=[1,1,1], material=box4))
-rt.scene.append(AABB(position=[1,0,-8], sizes=[1,1,1], material=box3))
+# rt.scene.append(AABB(position=[-1,0,-8], sizes=[1,1,1], material=box4))
+# rt.scene.append(AABB(position=[1,0,-8], sizes=[1,1,1], material=box3))
 
-rt.scene.append( Disk(position=[0, -4, -8], normal=[0,1,0], radius=1.5, material=mirror))
-rt.scene.append( Disk(position=[0, 4, -8], normal=[0,-1,0], radius=1.5, material=mirror))
-rt.scene.append( Disk(position=[0, 0, -18], normal=[0,0,1], radius=1.5, material=mirror))
-rt.scene.append( Disk(position=[-4, 0, -8], normal=[1,0,0], radius=1, material=mirror))
-rt.scene.append( Disk(position=[4, 0, -8], normal=[-1,0,0], radius=1, material=mirror))
+# rt.scene.append( Disk(position=[0, -4, -8], normal=[0,1,0], radius=1.5, material=mirror))
+# rt.scene.append( Disk(position=[0, 4, -8], normal=[0,-1,0], radius=1.5, material=mirror))
+# rt.scene.append( Disk(position=[0, 0, -18], normal=[0,0,1], radius=1.5, material=mirror))
+# rt.scene.append( Disk(position=[-4, 0, -8], normal=[1,0,0], radius=1, material=mirror))
+# rt.scene.append( Disk(position=[4, 0, -8], normal=[-1,0,0], radius=1, material=mirror))
+
+rt.scene.append(Triangle([0, 2, -5], [1, 2, -5], [0.5, 2, -3], material=brick))
+rt.scene.append(Triangle([-2, 0, -5], [-1, 0, -5], [-1.5, 1, -5], material=brick))
+rt.scene.append(Triangle([1, 0, -5], [2, 0, -5], [1.5, 1, -5], material=brick))
+# rt.scene.append(Torus([0,0,-5], 3, 1, material=brick))
 
 # # rt.scene.append(Sphere(position=[1,0,-5], radius=1, material=blueMirror))
 # rt.scene.append(Sphere([-1.5,0,-5], 1, material=brick))
@@ -107,5 +112,5 @@ while isRunning:
 	pygame.display.flip()
 	clock.tick(60)
 	
-rt.glGenerateFrameBuffer("BMP/spheres6.bmp")
+rt.glGenerateFrameBuffer("BMP/spheres7.bmp")
 pygame.quit()

@@ -1,4 +1,5 @@
-from math import pi, sin, cos, isclose
+from math import pi, sin, cos, isclose, sqrt
+import cmath
 
 
 #Matriz por matriz, matriz por vector, normalizar un vector, magnitud de un vector, matriz de identidad, inversa de una matriz

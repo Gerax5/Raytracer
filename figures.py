@@ -197,3 +197,42 @@ class AABB(Shape):
                          obj=self)
 
 
+class Triangle(Plane):
+    def __init__(self, v0, v1, v2, material ):
+        super().__init__(v0, normalizeVector(crossProduct(subtractVectors(v1, v0), subtractVectors(v2, v0))), material)
+        self.v0 = v0
+        self.v1 = v1
+        self.v2 = v2
+
+    def ray_intersect(self, orig, dir):
+        t = super().ray_intersect(orig, dir)
+        epsilon = 0.001
+        # t = self.ray_intersect_plane(orig, dir)
+        if t is None:
+            return None
+
+        P = sumVectors(orig, multiplyVectorScalar(dir, t.distance))
+
+        # Algoritmo de Moller-Trumbore usando coordenadas baricéntricas
+        edge1 = subtractVectors(self.v1, self.v0)
+        edge2 = subtractVectors(self.v2, self.v0)
+        h = crossProduct(dir, edge2)
+        a = dotProduct(edge1, h)
+
+        if abs(a) < epsilon:
+            return None 
+
+        f = 1.0 / a
+        s = subtractVectors(orig, self.v0)
+        u = f * dotProduct(s, h)
+
+        if u < 0.0 or u > 1.0:
+            return None
+
+        q = crossProduct(s, edge1)
+        v = f * dotProduct(dir, q)
+
+        if v < 0.0 or u + v > 1.0:
+            return None
+
+        return Intercept(point=P, normal=self.normal, distance=t.distance, texCoords=[u, v], rayDirection=dir, obj=self)
