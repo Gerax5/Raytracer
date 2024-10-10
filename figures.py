@@ -236,3 +236,124 @@ class Triangle(Plane):
             return None
 
         return Intercept(point=P, normal=self.normal, distance=t.distance, texCoords=[u, v], rayDirection=dir, obj=self)
+
+
+class Cylinder(Shape):
+    def __init__(self, position, radius, height, material):
+        super().__init__(position, material)
+        self.radius = radius
+        self.height = height
+        self.type = "Cylinder"
+        # Crear las dos tapas del cilindro (son dos discos)
+        self.top_disk = Disk([position[0], position[1] + height / 2, position[2]], [0, 1, 0], radius, material)
+        self.bottom_disk = Disk([position[0], position[1] - height / 2, position[2]], [0, -1, 0], radius, material)
+
+    def ray_intersect(self, orig, dir):
+        # Primero comprobar intersección con las tapas
+        top_intercept = self.top_disk.ray_intersect(orig, dir)
+        bottom_intercept = self.bottom_disk.ray_intersect(orig, dir)
+
+        # Ahora verificamos la intersección con la superficie lateral del cilindro
+        # Transformar las coordenadas a un sistema local donde el cilindro está alineado con el eje y
+        oc = subtractVectors(orig, self.position)
+        
+        a = dir[0]**2 + dir[2]**2  # x^2 + z^2
+        b = 2 * (oc[0] * dir[0] + oc[2] * dir[2])
+        c = oc[0]**2 + oc[2]**2 - self.radius**2
+
+        discriminant = b**2 - 4 * a * c
+
+        if discriminant < 0:
+            lateral_intercept = None
+        else:
+            sqrt_discriminant = discriminant ** 0.5
+            t0 = (-b - sqrt_discriminant) / (2 * a)
+            t1 = (-b + sqrt_discriminant) / (2 * a)
+
+            # Escoger el t más cercano y positivo
+            if t0 < 0:
+                t0 = t1
+            if t0 < 0:
+                lateral_intercept = None
+            else:
+                # Calcular el punto de intersección
+                P = sumVectors(orig, multiplyVectorScalar(dir, t0))
+                
+                # Verificar si la intersección está dentro de los límites del cilindro (en el eje y)
+                y = P[1]
+                if self.position[1] - self.height / 2 <= y <= self.position[1] + self.height / 2:
+                    normal = normalizeVector([P[0] - self.position[0], 0, P[2] - self.position[2]])
+                    lateral_intercept = Intercept(point=P, normal=normal, distance=t0, texCoords=None, rayDirection=dir, obj=self)
+                else:
+                    lateral_intercept = None
+
+        # Devolver el intercepto más cercano entre tapas y superficie lateral
+        closest_intercept = None
+        min_t = float('inf')
+
+        for intercept in [top_intercept, bottom_intercept, lateral_intercept]:
+            if intercept is not None and intercept.distance < min_t:
+                closest_intercept = intercept
+                min_t = intercept.distance
+
+        return closest_intercept
+    
+class Ellipsoid(Shape):
+    def __init__(self, position, radii, material):
+        """
+        radii: [radius_x, radius_y, radius_z] es una lista o tupla con los radios a lo largo de los tres ejes.
+        """
+        super().__init__(position, material)
+        self.radii = radii  # [rx, ry, rz] radios a lo largo de x, y y z
+        self.type = "Ellipsoid"
+    
+    def ray_intersect(self, orig, dir):
+        # Transformar el rayo a las coordenadas de la elipsoide normalizando por los radios
+        oc = subtractVectors(orig, self.position)
+        
+        # Normalizamos el rayo y el origen a las coordenadas elipsoidales
+        norm_oc = [oc[0] / self.radii[0], oc[1] / self.radii[1], oc[2] / self.radii[2]]
+        norm_dir = [dir[0] / self.radii[0], dir[1] / self.radii[1], dir[2] / self.radii[2]]
+        
+        # Calcular los coeficientes de la ecuación cuadrática
+        A = norm_dir[0] ** 2 + norm_dir[1] ** 2 + norm_dir[2] ** 2
+        B = 2 * (norm_oc[0] * norm_dir[0] + norm_oc[1] * norm_dir[1] + norm_oc[2] * norm_dir[2])
+        C = norm_oc[0] ** 2 + norm_oc[1] ** 2 + norm_oc[2] ** 2 - 1  # La ecuación de un elipsoide unitario es x^2 + y^2 + z^2 = 1
+        
+        # Resolver la ecuación cuadrática para encontrar la intersección
+        discriminant = B ** 2 - 4 * A * C
+        
+        if discriminant < 0:
+            return None  # No hay intersección
+        
+        sqrt_discriminant = discriminant ** 0.5
+        t0 = (-B - sqrt_discriminant) / (2 * A)
+        t1 = (-B + sqrt_discriminant) / (2 * A)
+        
+        if t0 < 0:
+            t0 = t1
+        if t0 < 0:
+            return None
+        
+        # Calculamos el punto de intersección más cercano
+        P = sumVectors(orig, multiplyVectorScalar(dir, t0))
+        
+        # Ahora calculamos la normal en el punto de intersección
+        # La normal es simplemente el vector desde el centro del elipsoide hasta el punto de intersección
+        # escalado por los radios
+        normal = subtractVectors(P, self.position)
+        normal = [normal[0] / (self.radii[0] ** 2), 
+                  normal[1] / (self.radii[1] ** 2), 
+                  normal[2] / (self.radii[2] ** 2)]
+        normal = normalizeVector(normal)
+        
+        # Coordenadas UV (opcional, solo si necesitas texturización)
+        u = (atan2(normal[2], normal[0]) / (2 * pi)) + 0.5
+        v = acos(normal[1]) / pi
+        
+        return Intercept(point=P, 
+                         normal=normal, 
+                         distance=t0, 
+                         texCoords=[u, v], 
+                         rayDirection=dir, 
+                         obj=self)

@@ -10,17 +10,17 @@ from lights import *
 from texture import Texture
 
 
-# width = 700
-# height = 540
+width = 700
+height = 540
 
-width = 220
-height = 220
+# width = 220
+# height = 220
 
 screen = pygame.display.set_mode((width, height), pygame.SCALED  )
 clock = pygame.time.Clock()
 
 rt = RendererRT(screen)
-rt.envMap = Texture("texture/room.bmp")
+rt.envMap = Texture("texture/atras.bmp")
 # rt.glClearColor(1.0,0.0,0.0)
 # rt.glClear()
 
@@ -40,10 +40,10 @@ box4 = Material(texture=Texture("texture/concrete.bmp"))
 box5 = Material(texture=Texture("texture/Grama.bmp"))
 
 # earth = Material(texture=Texture("texture/gold.bmp"))
-# gold = Material(texture=Texture("texture/gold.bmp"), spec=128, Ks=0.6, matType=REFLECTIVE)
+gold = Material(texture=Texture("texture/gold.bmp"), spec=128, Ks=0.6)
 # blackMarble = Material(texture=Texture("texture/black.bmp"), spec=200, Ks=0.8, matType=REFLECTIVE)
 # dotsGlass = Material(texture=Texture("texture/dots.bmp"), ior=1.5, spec=128, Ks=0.2, matType=TRANSPARENT)
-# glassPurple = Material(diffuse=[0.54, 0.17, 0.89], ior=1.77, spec=128, Ks=0.2, matType=TRANSPARENT)
+glassPurple = Material(diffuse=[0.36, 0.54, 0.85], ior=1.77, spec=128, Ks=0.2, matType=TRANSPARENT)
 grass = Material(texture=Texture("texture/Grama.bmp"), spec=128, Ks=0.2)
 # voltorb = Material(texture=Texture("texture/voltorb.bmp"), spec=128)
 
@@ -76,9 +76,17 @@ rt.lights.append(DirectionalLight(direction=[-1,-1,-1], intensity=0.8))
 # rt.scene.append( Disk(position=[-4, 0, -8], normal=[1,0,0], radius=1, material=mirror))
 # rt.scene.append( Disk(position=[4, 0, -8], normal=[-1,0,0], radius=1, material=mirror))
 
-rt.scene.append(Triangle([0, 2, -5], [1, 2, -5], [0.5, 2, -3], material=brick))
-rt.scene.append(Triangle([-2, 0, -5], [-1, 0, -5], [-1.5, 1, -5], material=brick))
-rt.scene.append(Triangle([1, 0, -5], [2, 0, -5], [1.5, 1, -5], material=brick))
+rt.scene.append(Triangle([0, 0, -5], [1, 0, -5], [0.5, 1, -3], material=glassPurple))
+rt.scene.append(Triangle([-2, 0, -5], [-1, 0, -5], [-1.5, 1, -5], material=glassPurple))
+rt.scene.append(Triangle([2, 1, -5], [3, 1, -5], [1.5, 2, -5], material=glassPurple))
+
+rt.scene.append(Ellipsoid([0, -2, -7], [1, 0.5, 0.5], material=mirror))
+rt.scene.append(Ellipsoid([-3, -2, -7], [1, 2, 0.5], material=mirror))
+rt.scene.append(Ellipsoid([3, -2, -7], [1, 2, 0.5], material=mirror))
+
+rt.scene.append(Cylinder([0,2,-5], 0.5, 1, gold))
+rt.scene.append(Cylinder([0.5,-0.5,-5], 0.2, 0.7, gold))
+rt.scene.append(Cylinder([-2,2,-5], 0.1, 0.5, gold))
 # rt.scene.append(Torus([0,0,-5], 3, 1, material=brick))
 
 # # rt.scene.append(Sphere(position=[1,0,-5], radius=1, material=blueMirror))
@@ -90,11 +98,11 @@ rt.lights.append(PointLight(position = [0,0,-3]))
 # rt.lights.append(PointLight(position = [0,0,-19]))
 # rt.lights.append(SpotLight(position = [2,0,-5], direction = [-1,0,0])) # direction = [-1,0,0] 
 
-rt.scene.append(Plane(position = [0,-5,-5], normal = [0,1,0], material=wood))
-rt.scene.append(Plane(position = [0,7,-5], normal = [0,-1,0], material=techo))
-rt.scene.append(Plane(position = [0,-7,-20], normal = [0,0,1], material=whiteMat))
-rt.scene.append(Plane(position = [8,0,-5], normal = [-1,0,0], material=whiteMat))
-rt.scene.append(Plane(position = [-8,0,-5], normal = [1,0,0], material=whiteMat))
+# rt.scene.append(Plane(position = [0,-5,-5], normal = [0,1,0], material=wood))
+# rt.scene.append(Plane(position = [0,7,-5], normal = [0,-1,0], material=techo))
+# rt.scene.append(Plane(position = [0,-7,-20], normal = [0,0,1], material=whiteMat))
+# rt.scene.append(Plane(position = [8,0,-5], normal = [-1,0,0], material=whiteMat))
+# rt.scene.append(Plane(position = [-8,0,-5], normal = [1,0,0], material=whiteMat))
 
 rt.glRender()
 					
