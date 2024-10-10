@@ -300,31 +300,24 @@ class Cylinder(Shape):
     
 class Ellipsoid(Shape):
     def __init__(self, position, radii, material):
-        """
-        radii: [radius_x, radius_y, radius_z] es una lista o tupla con los radios a lo largo de los tres ejes.
-        """
         super().__init__(position, material)
-        self.radii = radii  # [rx, ry, rz] radios a lo largo de x, y y z
+        self.radii = radii
         self.type = "Ellipsoid"
     
     def ray_intersect(self, orig, dir):
-        # Transformar el rayo a las coordenadas de la elipsoide normalizando por los radios
         oc = subtractVectors(orig, self.position)
         
-        # Normalizamos el rayo y el origen a las coordenadas elipsoidales
         norm_oc = [oc[0] / self.radii[0], oc[1] / self.radii[1], oc[2] / self.radii[2]]
         norm_dir = [dir[0] / self.radii[0], dir[1] / self.radii[1], dir[2] / self.radii[2]]
         
-        # Calcular los coeficientes de la ecuación cuadrática
         A = norm_dir[0] ** 2 + norm_dir[1] ** 2 + norm_dir[2] ** 2
         B = 2 * (norm_oc[0] * norm_dir[0] + norm_oc[1] * norm_dir[1] + norm_oc[2] * norm_dir[2])
-        C = norm_oc[0] ** 2 + norm_oc[1] ** 2 + norm_oc[2] ** 2 - 1  # La ecuación de un elipsoide unitario es x^2 + y^2 + z^2 = 1
+        C = norm_oc[0] ** 2 + norm_oc[1] ** 2 + norm_oc[2] ** 2 - 1
         
-        # Resolver la ecuación cuadrática para encontrar la intersección
         discriminant = B ** 2 - 4 * A * C
         
         if discriminant < 0:
-            return None  # No hay intersección
+            return None 
         
         sqrt_discriminant = discriminant ** 0.5
         t0 = (-B - sqrt_discriminant) / (2 * A)
@@ -335,19 +328,14 @@ class Ellipsoid(Shape):
         if t0 < 0:
             return None
         
-        # Calculamos el punto de intersección más cercano
         P = sumVectors(orig, multiplyVectorScalar(dir, t0))
-        
-        # Ahora calculamos la normal en el punto de intersección
-        # La normal es simplemente el vector desde el centro del elipsoide hasta el punto de intersección
-        # escalado por los radios
+
         normal = subtractVectors(P, self.position)
         normal = [normal[0] / (self.radii[0] ** 2), 
                   normal[1] / (self.radii[1] ** 2), 
                   normal[2] / (self.radii[2] ** 2)]
         normal = normalizeVector(normal)
         
-        # Coordenadas UV (opcional, solo si necesitas texturización)
         u = (atan2(normal[2], normal[0]) / (2 * pi)) + 0.5
         v = acos(normal[1]) / pi
         
