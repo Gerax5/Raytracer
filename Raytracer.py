@@ -30,57 +30,16 @@ wood = Material(diffuse=[0.7, 0.5, 0.3], spec=64, Ks=0.1)
 grass = Material(diffuse=[0.20, 0.35, 0.15], spec=64, Ks=0.1)
 whiteMat = Material(diffuse=[0.9, 0.9, 0.9], spec=32, Ks=0.05)
 white = Material(diffuse=[1,1,1])
-
 ama = Material(diffuse=[0.98, 0.86, 0.13])
 gray = Material(diffuse=[0.5,0.5,0.5])
-
-
 ventana = Material(diffuse=[0.53, 0.81, 0.92], spec=128, Ks=0.5, matType=REFLECTIVE)
 paint = Material(texture=Texture("texture/wal.bmp"))
 
-techo = Material(diffuse=[0.95, 0.95, 0.95], spec=16, Ks=0.02)
-# grass = Material(diffuse=[0.2,1.0,0.2], spec=64, Ks=0.2)
-mirror = Material(diffuse=[0.54, 0.17, 0.89], spec=128, Ks=0.2, matType=REFLECTIVE)
-# texture=Texture("texture/dots.bmp"),
-# blueMirror = Material(diffuse=[0.5,0.5,1.0], spec=128, Ks=0.2, matType=REFLECTIVE)
-# glass = Material(ior=1.5, spec=128, Ks=0.2, matType=TRANSPARENT)
-box = Material(texture=Texture("texture/woodenBox.bmp"))
-box2 = Material(texture=Texture("texture/tex1.bmp"))
-box3 = Material(texture=Texture("texture/tex2.bmp"))
-box4 = Material(texture=Texture("texture/concrete.bmp"))
-box5 = Material(texture=Texture("texture/Grama.bmp"))
-
-# earth = Material(texture=Texture("texture/gold.bmp"))
-gold = Material(texture=Texture("texture/gold.bmp"), spec=128, Ks=0.6)
-blackMarble = Material(texture=Texture("texture/black.bmp"), spec=200, Ks=0.8)
-# dotsGlass = Material(texture=Texture("texture/dots.bmp"), ior=1.5, spec=128, Ks=0.2, matType=TRANSPARENT)
-glassPurple = Material(diffuse=[0.36, 0.54, 0.85], ior=1.77, spec=128, Ks=0.2, matType=TRANSPARENT)
-# grass = Material(texture=Texture("texture/Grama.bmp"), spec=128, Ks=0.2)
-# voltorb = Material(texture=Texture("texture/voltorb.bmp"), spec=128)
 
 
-rt.lights.append(DirectionalLight(direction=[-1,-1,-1], intensity=0.8))
-# # rt.lights.append(DirectionalLight(direction=[0.5,-0.5,-1], intensity=0.8, color=[1,1,1]))
-# rt.lights.append(AmbientLight(intensity=0.1))
-
-# Arriba
-# rt.scene.append(Sphere(position=[-5,2,-10], radius=1.5, material=voltorb))
-# rt.scene.append(Sphere(position=[0,2,-10], radius=1.5, material=gold))
-# rt.scene.append(Sphere(position=[5,2,-10], radius=1.5, material=dotsGlass))
-
-#Abajo
-# rt.scene.append(Sphere(position=[-5,-2,-10], radius=1.5, material=grass))
-# rt.scene.append(Sphere(position=[0,-2,-10], radius=1.5, material=blackMarble))
-# rt.scene.append(Sphere(position=[5,-2,-10], radius=1.5, material=glassPurple))
-
-# rt.scene.append(Plane(position=[0,-5,-5],  normal=[0,1,0], material=brick))
-# rt.scene.append(Sphere(position=[0,0,-5], radius=1.5, material=glass))
-
-# rt.lights.append(PointLight( position=[0,0,-5], intensity=1))
-
-# rt.scene.append(AABB(position=[-1,0,-8], sizes=[1,1,1], material=box4))
 
 
+# Figura
 noRotElip = rotationElip(0,0,0)
 
 # Casa
@@ -91,20 +50,17 @@ rt.scene.append(Cylinder([0,-2.5,-15], 0.8, 1.1, black)) #2
 
 #Parte de abajo de la casa
 rt.scene.append(Hemisphere(position=[0,-5.8,-15], normal=[0,1,0],radius=3.7, material=brick)) # 2, r=4
-
 rt.scene.append(Cylinder2(position=[3,-4.8,-13], radius=0.8, height=1, material=black, rotation_matrix=rotationElip(-45,0,90))) #2
 
 # Zapato
 rt.scene.append(Sphere(position=[4.5,-5.2,-12], material=ama, radius=1.5))
 rt.scene.append(Ellipsoid(position=[4.5, -3, -12], material=ama, radii=[1.5,2,1.5], rotation_matrix=noRotElip))
-
 rt.scene.append(Cylinder2(position=[5,-5,-11],height=0.5, radius=1.6, material=ama, rotation_matrix=rotationElip(-45,0,90)))
 rt.scene.append(Cylinder2(position=[5,-3,-11],height=0.5, radius=1.8, material=ama, rotation_matrix=rotationElip(-45,0,90)))
 rt.scene.append(Disk(position=[5,-5.5,-10.5],radius=1.6, normal=[1,0,1], material=gray)) #[5,-4,-11]
 rt.scene.append(Disk(position=[5,-5.5,-10.4],radius=1.2, normal=[1,0,1], material=ama)) #[5,-4,-11]
 
-
-#Vidrio
+#Vidrio de la casa
 rt.scene.append( Disk(position=[-1.3, -3.2, -10], normal=[-1,0,-1], radius=0.7, material=ventana))
 rt.scene.append( Disk(position=[0, -3.2, -10], normal=[-0.8,0,-1], radius=0.7, material=ventana))
 
@@ -125,42 +81,9 @@ rt.scene.append(Ellipsoid(position=[-7,0.2,-14.7],radii=[0.8, 0.2, 0.7],rotation
 rt.scene.append( Disk(position=[0, -6, -25], normal=[0,1,0], radius=20, material=grass))
 rt.scene.append( Disk(position=[15, -6, -40], normal=[0,1,0], radius=5, material=wood))
 
-# theta_x = pi/4#30 * pi / 180
-# theta_y = pi/4
-# theta_z = pi/4#30 * pi / 180
 
-# pitch = 0    # Rotación alrededor del eje x
-# yaw = 0      # Rotación alrededor del eje y
-# roll = 45    # Rotación de 45 grados alrededor del eje z
-
-# rotation_mat = rotationElip(pitch, yaw, roll)
-
-
-# rt.scene.append(Ellipsoid(position=[0,-0.2,-6],radii=[1, 0.3, 1],rotation_matrix=rotation_mat, material=white))
-
-
-# rt.scene.append( Disk(position=[0, 4, -8], normal=[0,-1,0], radius=1.5, material=mirror))
-# rt.scene.append( Disk(position=[0, 0, -18], normal=[0,0,1], radius=1.5, material=mirror))
-# rt.scene.append( Disk(position=[-4, 0, -8], normal=[1,0,0], radius=1, material=mirror))
-# rt.scene.append( Disk(position=[4, 0, -8], normal=[-1,0,0], radius=1, material=mirror))
-
-# rt.scene.append(Triangle([0, 0, -5], [1, 0, -5], [0.5, 1, -3], material=glassPurple))
-# rt.scene.append(Triangle([-2, 0, -5], [-1, 0, -5], [-1.5, 1, -5], material=glassPurple))
-# rt.scene.append(Triangle([2, 1, -5], [3, 1, -5], [1.5, 2, -5], material=glassPurple))
-
-# rt.scene.append(Ellipsoid([0, -2, -7], [1, 0.5, 0.5], material=mirror))
-# rt.scene.append(Ellipsoid([-3, -2, -7], [1, 2, 0.5], material=mirror))
-# rt.scene.append(Ellipsoid([3, -2, -7], [1, 2, 0.5], material=mirror))
-
-# rt.scene.append(Cylinder([0,2,-5], 0.5, 1, gold))
-# rt.scene.append(Cylinder([0.5,-0.5,-5], 0.2, 0.7, gold))
-# rt.scene.append(Cylinder([-2,2,-5], 0.1, 0.5, gold))
-# rt.scene.append(Torus([0,0,-5], 3, 1, material=brick))
-
-# # rt.scene.append(Sphere(position=[1,0,-5], radius=1, material=blueMirror))
-# rt.scene.append(Sphere([-1.5,0,-5], 1, material=brick))
-# rt.scene.append(Sphere([1.5,0,-5], 1, material=brick))
-
+#Luces
+rt.lights.append(DirectionalLight(direction=[-1,-1,-1], intensity=0.8))
 rt.lights.append(AmbientLight(intensity = 0.5))
 rt.lights.append(DirectionalLight(intensity=0.8, direction=[0,0,1]))
 rt.lights.append(DirectionalLight(intensity=0.8, direction=[0,-1,-1]))
@@ -168,14 +91,7 @@ rt.lights.append(PointLight(position = [0,-5,-10]))
 rt.lights.append(PointLight(position = [-3,-5,-15]))
 rt.lights.append(PointLight(position = [6,-3,-10]))
 rt.lights.append(PointLight(position = [-6,0,-14]))
-# rt.lights.append(PointLight(position = [0,0,-19]))
-# rt.lights.append(SpotLight(position = [2,0,-5], direction = [-1,0,0])) # direction = [-1,0,0]
 
-# rt.scene.append(Plane(position = [0,-5,-5], normal = [0,1,0], material=wood))
-# rt.scene.append(Plane(position = [0,7,-5], normal = [0,-1,0], material=techo))
-# rt.scene.append(Plane(position = [0,-7,-20], normal = [0,0,1], material=whiteMat))
-# rt.scene.append(Plane(position = [8,0,-5], normal = [-1,0,0], material=whiteMat))
-# rt.scene.append(Plane(position = [-8,0,-5], normal = [1,0,0], material=whiteMat))
 
 rt.glRender()
 
