@@ -1,26 +1,30 @@
-# RT2
+# Proyecto 2
 
 - Gerardo Pineda 22880
 
 ## Materiales usados
 
-- Fondo: Un fondo que encontre por ahi
-- Gold: Material Reflectivo
-- Black Marble: Material Reflectivo
-- Dots Glass: Material Transparente con textura agregada de puntos
-- Glass Purple: Material transparente morado
-- Grass: Material opaco césped
-- Voltorb: Material opaco de un pokemon (no encontre un bmp entonces agarre un png y no salio bien pero me gusto jajaja)
+* Black: Una textura negra que se uso para las partenes negras
+* brick: Es una material rojo que se uso para la parte de abajo de la casa
+* wood: Es como madera que se uso para un pedazo de suelo que se ve al fondo a la izquierdaama
+* grass: La grama
+* WhiteMat: Para las partes blancas
+* ama: Un material amarillo para el zapato
+* gray: Materil gris para la puerta
+* ventana: Un material reflectivo usado para las ventanas
+* paint: Un material con textura utilizado para la pared de atras de la casas
 
-## Imagenes
+## Figuras Usadas
+En total se usaron: 25 figuras
 
-#### Adelanto
+* 5 Esferas
+* 1 Hemisferio
+* 6 Cilindro
+* 6 Elipsoides
+* 6 Discos
+* 1 AABB
 
-- <img src="https://raw.githubusercontent.com/Gerax5/Raytracer/refs/heads/lab03/BMP/spheres7.bmp"/>
+## Render Final
 
-
-### Preguntas a chat
-* Le pase mi codigo a chat y le pregunte como haria un triangulo
-* ![image](https://github.com/user-attachments/assets/810cf19e-b925-46bc-97bd-57c1b8beb749)
-* Lo que hice fue tomar ideas de ahi porque mi implementacion es distinta solo el algoritmo de Möller-Trumbore me lo robe de ahi, despues calcular la normal y utilizar el plano fue idea mia
+- <img src="https://raw.githubusercontent.com/Gerax5/Raytracer/refs/heads/Proyecto2/BMP/spheres7.bmp"/>
 
