@@ -24,6 +24,9 @@ En total se usaron: 25 figuras
 * 6 Discos
 * 1 AABB
 
+## Luces
+Se usaron un total de 8 luces de disntintos lados y tipos, se uso ambiental, directional y de punto
+
 ## Render Final
 
 - <img src="https://raw.githubusercontent.com/Gerax5/Raytracer/refs/heads/Proyecto2/BMP/spheres7.bmp"/>
