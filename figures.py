@@ -244,7 +244,6 @@ class Cylinder(Shape):
         self.radius = radius
         self.height = height
         self.type = "Cylinder"
-        # Crear las dos tapas del cilindro (son dos discos)
         self.top_disk = Disk([position[0], position[1] + height / 2, position[2]], [0, 1, 0], radius, material)
         self.bottom_disk = Disk([position[0], position[1] - height / 2, position[2]], [0, -1, 0], radius, material)
 
@@ -253,8 +252,6 @@ class Cylinder(Shape):
         top_intercept = self.top_disk.ray_intersect(orig, dir)
         bottom_intercept = self.bottom_disk.ray_intersect(orig, dir)
 
-        # Ahora verificamos la intersección con la superficie lateral del cilindro
-        # Transformar las coordenadas a un sistema local donde el cilindro está alineado con el eje y
         oc = subtractVectors(orig, self.position)
         
         a = dir[0]**2 + dir[2]**2  # x^2 + z^2
@@ -276,10 +273,9 @@ class Cylinder(Shape):
             if t0 < 0:
                 lateral_intercept = None
             else:
-                # Calcular el punto de intersección
+
                 P = sumVectors(orig, multiplyVectorScalar(dir, t0))
-                
-                # Verificar si la intersección está dentro de los límites del cilindro (en el eje y)
+ 
                 y = P[1]
                 if self.position[1] - self.height / 2 <= y <= self.position[1] + self.height / 2:
                     normal = normalizeVector([P[0] - self.position[0], 0, P[2] - self.position[2]])
@@ -287,7 +283,6 @@ class Cylinder(Shape):
                 else:
                     lateral_intercept = None
 
-        # Devolver el intercepto más cercano entre tapas y superficie lateral
         closest_intercept = None
         min_t = float('inf')
 
@@ -303,25 +298,23 @@ class Ellipsoid(Shape):
     def __init__(self, position, radii, rotation_matrix, material):
         super().__init__(position, material)
         self.radii = radii
-        self.rotation = rotation_matrix  # Matriz de rotación 3x3
+        self.rotation = rotation_matrix  
         self.type = "Ellipsoid"
         
     def ray_intersect(self, orig, dir):
-        # Vector desde el origen del rayo hasta el centro de la elipsoide
+ 
         oc = subtractVectors(orig, self.position)
         
-        # Aplicar la rotación inversa (traspuesta de la matriz de rotación)
+
         R_inv = transposeMatrix(self.rotation)
         
-        # Transformar al espacio local
         oc_local = multiplyMatrixVector(R_inv, oc)
         dir_local = multiplyMatrixVector(R_inv, dir)
         
-        # Normalizar por los radios
+
         norm_oc = [oc_local[0] / self.radii[0], oc_local[1] / self.radii[1], oc_local[2] / self.radii[2]]
         norm_dir = [dir_local[0] / self.radii[0], dir_local[1] / self.radii[1], dir_local[2] / self.radii[2]]
-        
-        # Coeficientes de la ecuación cuadrática
+
         A = dotProduct(norm_dir, norm_dir)
         B = 2 * dotProduct(norm_oc, norm_dir)
         C = dotProduct(norm_oc, norm_oc) - 1
@@ -340,13 +333,10 @@ class Ellipsoid(Shape):
         if t0 < 0:
             return None
         
-        # Punto de intersección en el espacio local
         P_local = sumVectors(oc_local, multiplyVectorScalar(dir_local, t0))
         
-        # Transformar de vuelta al espacio mundial
         P = sumVectors(self.position, multiplyMatrixVector(self.rotation, P_local))
     
-        # Calcular la normal en el espacio local
         normal_local = [
             P_local[0] / (self.radii[0] ** 2), 
             P_local[1] / (self.radii[1] ** 2), 
@@ -354,7 +344,6 @@ class Ellipsoid(Shape):
         ]
         normal_local = normalizeVector(normal_local)
     
-        # Transformar la normal al espacio mundial
         normal = multiplyMatrixVector(self.rotation, normal_local)
         normal = normalizeVector(normal)
         
@@ -388,3 +377,62 @@ class Hemisphere(Sphere):
             return None
 
         return intercept
+
+
+class Cylinder2(Shape):
+    def __init__(self, position, radius, height, rotation_matrix, material):
+        super().__init__(position, material)
+        self.radius = radius
+        self.height = height
+        self.rotation = rotation_matrix  
+        self.type = "Cylinder"
+
+    def ray_intersect(self, orig, dir):
+        oc = subtractVectors(orig, self.position)
+
+        R_inv = transposeMatrix(self.rotation)
+        oc_local = multiplyMatrixVector(R_inv, oc)
+        dir_local = multiplyMatrixVector(R_inv, dir)
+
+        a = dir_local[0]**2 + dir_local[2]**2
+        b = 2 * (oc_local[0] * dir_local[0] + oc_local[2] * dir_local[2])
+        c = oc_local[0]**2 + oc_local[2]**2 - self.radius**2
+
+        discriminant = b**2 - 4 * a * c
+        intercepts = []
+
+        if discriminant >= 0:
+            sqrt_discriminant = sqrt(discriminant)
+            t0 = (-b - sqrt_discriminant) / (2 * a)
+            t1 = (-b + sqrt_discriminant) / (2 * a)
+
+            for t in [t0, t1]:
+                if t >= 0:
+                    P_local = sumVectors(oc_local, multiplyVectorScalar(dir_local, t))
+                    y = P_local[1]
+                    if -self.height / 2 <= y <= self.height / 2:
+                        normal_local = [P_local[0], 0, P_local[2]]
+                        normal_local = normalizeVector(normal_local)
+                        P_world = sumVectors(self.position, multiplyMatrixVector(self.rotation, P_local))
+                        normal_world = multiplyMatrixVector(self.rotation, normal_local)
+                        normal_world = normalizeVector(normal_world)
+                        intercepts.append(Intercept(point=P_world, normal=normal_world, distance=t, texCoords=None, rayDirection=dir, obj=self))
+
+        for y_cap, cap_normal in [(self.height / 2, [0, 1, 0]), (-self.height / 2, [0, -1, 0])]:
+            if dir_local[1] != 0:
+                t = (y_cap - oc_local[1]) / dir_local[1]
+                if t >= 0:
+                    P_local = sumVectors(oc_local, multiplyVectorScalar(dir_local, t))
+                    xz_sq = P_local[0]**2 + P_local[2]**2
+                    if xz_sq <= self.radius**2:
+                        P_world = sumVectors(self.position, multiplyMatrixVector(self.rotation, P_local))
+                        normal_world = multiplyMatrixVector(self.rotation, cap_normal)
+                        normal_world = normalizeVector(normal_world)
+                        intercepts.append(Intercept(point=P_world, normal=normal_world, distance=t, texCoords=None, rayDirection=dir, obj=self))
+
+        if not intercepts:
+            return None
+
+        closest_intercept = min(intercepts, key=lambda inter: inter.distance)
+        return closest_intercept
+
