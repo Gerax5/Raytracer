@@ -1,4 +1,4 @@
-from math import pi, sin, cos, isclose, sqrt
+from math import pi, radians, sin, cos, isclose, sqrt
 import cmath
 
 
@@ -174,6 +174,9 @@ def subtractVectors(v1, v2):
     
     return resultado
 
+def transposeMatrix(matrix):
+    return [list(row) for row in zip(*matrix)]
+
 def multiplyVectorScalar(vector, scalar):
     result = [element * scalar for element in vector]
     return result
@@ -195,3 +198,33 @@ def reflectVector(normal, direction):
     reflect = normalizeVector(reflect)
     
     return reflect
+
+def rotationElip(pitch, yaw, roll):
+    # Convertir a radianes
+    pitch = radians(pitch)
+    yaw = radians(yaw)
+    roll = radians(roll)
+
+    # Matrices de rotación alrededor de los ejes x, y, z
+    Rx = [
+        [1, 0, 0],
+        [0, cos(pitch), -sin(pitch)],
+        [0, sin(pitch), cos(pitch)]
+    ]
+
+    Ry = [
+        [cos(yaw), 0, sin(yaw)],
+        [0, 1, 0],
+        [-sin(yaw), 0, cos(yaw)]
+    ]
+
+    Rz = [
+        [cos(roll), -sin(roll), 0],
+        [sin(roll), cos(roll), 0],
+        [0, 0, 1]
+    ]
+
+    # Matriz de rotación combinada: R = Rz * Ry * Rx
+    Rzy = multiplyMatrixMatrix(Rz, Ry)
+    R = multiplyMatrixMatrix(Rzy, Rx)
+    return R

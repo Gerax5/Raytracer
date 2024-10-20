@@ -239,7 +239,7 @@ class Triangle(Plane):
 
 
 class Cylinder(Shape):
-    def __init__(self, position, radius, height, material):
+    def __init__(self, position, radius, height, material, rotation_matrix = rotationElip(0,0,0)):
         super().__init__(position, material)
         self.radius = radius
         self.height = height
@@ -297,29 +297,41 @@ class Cylinder(Shape):
                 min_t = intercept.distance
 
         return closest_intercept
-    
+
+
 class Ellipsoid(Shape):
-    def __init__(self, position, radii, material):
+    def __init__(self, position, radii, rotation_matrix, material):
         super().__init__(position, material)
         self.radii = radii
+        self.rotation = rotation_matrix  # Matriz de rotación 3x3
         self.type = "Ellipsoid"
-    
+        
     def ray_intersect(self, orig, dir):
+        # Vector desde el origen del rayo hasta el centro de la elipsoide
         oc = subtractVectors(orig, self.position)
         
-        norm_oc = [oc[0] / self.radii[0], oc[1] / self.radii[1], oc[2] / self.radii[2]]
-        norm_dir = [dir[0] / self.radii[0], dir[1] / self.radii[1], dir[2] / self.radii[2]]
+        # Aplicar la rotación inversa (traspuesta de la matriz de rotación)
+        R_inv = transposeMatrix(self.rotation)
         
-        A = norm_dir[0] ** 2 + norm_dir[1] ** 2 + norm_dir[2] ** 2
-        B = 2 * (norm_oc[0] * norm_dir[0] + norm_oc[1] * norm_dir[1] + norm_oc[2] * norm_dir[2])
-        C = norm_oc[0] ** 2 + norm_oc[1] ** 2 + norm_oc[2] ** 2 - 1
+        # Transformar al espacio local
+        oc_local = multiplyMatrixVector(R_inv, oc)
+        dir_local = multiplyMatrixVector(R_inv, dir)
+        
+        # Normalizar por los radios
+        norm_oc = [oc_local[0] / self.radii[0], oc_local[1] / self.radii[1], oc_local[2] / self.radii[2]]
+        norm_dir = [dir_local[0] / self.radii[0], dir_local[1] / self.radii[1], dir_local[2] / self.radii[2]]
+        
+        # Coeficientes de la ecuación cuadrática
+        A = dotProduct(norm_dir, norm_dir)
+        B = 2 * dotProduct(norm_oc, norm_dir)
+        C = dotProduct(norm_oc, norm_oc) - 1
         
         discriminant = B ** 2 - 4 * A * C
         
         if discriminant < 0:
             return None 
-        
-        sqrt_discriminant = discriminant ** 0.5
+            
+        sqrt_discriminant = sqrt(discriminant)
         t0 = (-B - sqrt_discriminant) / (2 * A)
         t1 = (-B + sqrt_discriminant) / (2 * A)
         
@@ -328,16 +340,26 @@ class Ellipsoid(Shape):
         if t0 < 0:
             return None
         
-        P = sumVectors(orig, multiplyVectorScalar(dir, t0))
-
-        normal = subtractVectors(P, self.position)
-        normal = [normal[0] / (self.radii[0] ** 2), 
-                  normal[1] / (self.radii[1] ** 2), 
-                  normal[2] / (self.radii[2] ** 2)]
+        # Punto de intersección en el espacio local
+        P_local = sumVectors(oc_local, multiplyVectorScalar(dir_local, t0))
+        
+        # Transformar de vuelta al espacio mundial
+        P = sumVectors(self.position, multiplyMatrixVector(self.rotation, P_local))
+    
+        # Calcular la normal en el espacio local
+        normal_local = [
+            P_local[0] / (self.radii[0] ** 2), 
+            P_local[1] / (self.radii[1] ** 2), 
+            P_local[2] / (self.radii[2] ** 2)
+        ]
+        normal_local = normalizeVector(normal_local)
+    
+        # Transformar la normal al espacio mundial
+        normal = multiplyMatrixVector(self.rotation, normal_local)
         normal = normalizeVector(normal)
         
-        u = (atan2(normal[2], normal[0]) / (2 * pi)) + 0.5
-        v = acos(normal[1]) / pi
+        u = (atan2(normal_local[2], normal_local[0]) / (2 * pi)) + 0.5
+        v = acos(normal_local[1]) / pi
         
         return Intercept(point=P, 
                          normal=normal, 
@@ -345,3 +367,24 @@ class Ellipsoid(Shape):
                          texCoords=[u, v], 
                          rayDirection=dir, 
                          obj=self)
+
+
+class Hemisphere(Sphere):
+    def __init__(self, position, radius, normal, material):
+        super().__init__(position, radius, material)
+        self.normal = normalizeVector(normal)
+        self.type = "Hemisphere"
+
+    def ray_intersect(self, orig, dir):
+        intercept = super().ray_intersect(orig, dir)
+
+        if intercept is None:
+            return None
+
+        P_to_center = subtractVectors(intercept.point, self.position)
+
+
+        if dotProduct(self.normal, P_to_center) < 0:
+            return None
+
+        return intercept
